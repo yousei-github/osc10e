@@ -1,0 +1,339 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "C/C++: gcc-12 build this project in default optimization",
+			"command": "/usr/bin/gcc-12", // The path of compiler
+			"args": [
+				"-fdiagnostics-color=always",
+				//"-O3", // O1/O2/O3
+				"-g", // Produce debugging information in the operationg system's native format
+				"-Wall", // Turns on all optional warnings which are desirable for normal code
+				"-Werror", // Make all warnings into hard errors. Source code which triggers warnings will be rejected
+				"-fopenmp", // Enables #pragma omp in source code
+				//"-std=c++17", // c++11/c++17
+				/**
+				 * Below are predefine names:
+				 * e.g., -D name. Predefine [name] as a macro, with definition 1.
+				 */
+				//  "-D",
+				//  "NDEBUG",
+				/**
+				 * Below are header files: (can be from multiples folders)
+				 */
+				"-I", // e.g., -I dir. This means adding the directory [dir] to the list of directories to be searched for header files during preprocessing
+				"/lib/modules/6.5.0-26-generic/build/include/",
+				// "-L", // e.g., -L dir. Add directory [dir] to the list of directories to be searched for [-l].
+				// "${workspaceFolder}/vcpkg_installed/x64-linux/lib",
+				/**
+				 * Below are source files: (can be from multiples folders)
+				 */
+				"${workspaceFolder}/ch2/simple.c",
+				/**
+				 * Below are library names:
+				 * e.g., -l library. Search the library named [library] when linking.
+				 * 
+				 * The linker searches and processes libraries and object files in the order they are specified.
+				 * Thus, [foo.o -lz bar.o] searches library [z] after file [foo.o] but before [bar.o]. If bar.o refers to functions in [z], those functions may not be loaded.
+				 *
+				 * The linker searches a standard list of directories plus any that you specify with [-L] for the library, which is actually a file named [liblibrary.a]=[a file name library surrounded with lib and .a].
+				 */
+				//  "-l",
+				//  "fmt",
+				/**
+				 * Below is the executable file's name
+				 */
+				"-o", // e.g., -o file1. This means placing the primary output in file [file1].
+				"${workspaceFolder}/ch2/project_entry"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}" // Define the cwd command, such as ${fileDirname}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: /usr/bin/gcc-12"
+		},
+		{
+			"type": "shell",
+			"label": "C/C++: g++ build this project in optimization level 3",
+			"command": "/usr/bin/g++", // The path of compiler
+			"args": [
+				"-fdiagnostics-color=always",
+				"-O3", // O1/O2/O3
+				"-g", // Produce debugging information in the operationg system's native format
+				"-Wall", // Turns on all optional warnings which are desirable for normal code
+				"-Werror", // Make all warnings into hard errors. Source code which triggers warnings will be rejected
+				"-fopenmp", // Enables #pragma omp in source code
+				//"-std=c++17", // c++11/c++17
+				/**
+				 * Below are predefine names:
+				 * e.g., -D name. Predefine [name] as a macro, with definition 1.
+				 */
+				//  "-D",
+				//  "NDEBUG",
+				/**
+				 * Below are header files: (can be from multiples folders)
+				 */
+				"-I", // e.g., -I dir. This means adding the directory [dir] to the list of directories to be searched for header files during preprocessing
+				"${workspaceFolder}/Cplusplus/include/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/LinkedList/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/NumericProgression/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/Vector/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/Array/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/SortingAlgorithm/",
+				// "-L", // e.g., -L dir. Add directory [dir] to the list of directories to be searched for [-l].
+				// "${workspaceFolder}/vcpkg_installed/x64-linux/lib",
+				/**
+				 * Below are source files: (can be from multiples folders)
+				 */
+				"${workspaceFolder}/Cplusplus/source/LinkedList/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/NumericProgression/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/Vector/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/Array/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/SortingAlgorithm/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/*.cpp",
+				/**
+				 * Below are library names:
+				 * e.g., -l library. Search the library named [library] when linking.
+				 * 
+				 * The linker searches and processes libraries and object files in the order they are specified.
+				 * Thus, [foo.o -lz bar.o] searches library [z] after file [foo.o] but before [bar.o]. If bar.o refers to functions in [z], those functions may not be loaded.
+				 *
+				 * The linker searches a standard list of directories plus any that you specify with [-L] for the library, which is actually a file named [liblibrary.a]=[a file name library surrounded with lib and .a].
+				 */
+				//  "-l",
+				//  "fmt",
+				/**
+				 * Below is the executable file's name
+				 */
+				"-o", // e.g., -o file1. This means placing the primary output in file [file1].
+				"${workspaceFolder}/Cplusplus/bin/project_entry_O3"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}" // Define the cwd command, such as ${fileDirname}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"detail": "compiler: /usr/bin/g++"
+		},
+		{
+			"type": "shell",
+			"label": "C/C++: g++ build this project in optimization level 3 without debugging",
+			"command": "/usr/bin/g++", // The path of compiler
+			"args": [
+				"-fdiagnostics-color=always",
+				"-O3", // O1/O2/O3
+				"-g", // Produce debugging information in the operationg system's native format
+				"-Wall", // Turns on all optional warnings which are desirable for normal code
+				"-Werror", // Make all warnings into hard errors. Source code which triggers warnings will be rejected
+				"-fopenmp", // Enables #pragma omp in source code
+				//"-std=c++17", // c++11/c++17
+				/**
+				 * Below are predefine names:
+				 * e.g., -D name. Predefine [name] as a macro, with definition 1.
+				 */
+				"-D",
+				"NDEBUG",
+				/**
+				 * Below are header files: (can be from multiples folders)
+				 */
+				"-I", // e.g., -I dir. This means adding the directory [dir] to the list of directories to be searched for header files during preprocessing
+				"${workspaceFolder}/Cplusplus/include/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/LinkedList/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/NumericProgression/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/Vector/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/Array/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/SortingAlgorithm/",
+				// "-L", // e.g., -L dir. Add directory [dir] to the list of directories to be searched for [-l].
+				// "${workspaceFolder}/vcpkg_installed/x64-linux/lib",
+				/**
+				 * Below are source files: (can be from multiples folders)
+				 */
+				"${workspaceFolder}/Cplusplus/source/LinkedList/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/NumericProgression/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/Vector/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/Array/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/SortingAlgorithm/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/*.cpp",
+				/**
+				 * Below are library names:
+				 * e.g., -l library. Search the library named [library] when linking.
+				 * 
+				 * The linker searches and processes libraries and object files in the order they are specified.
+				 * Thus, [foo.o -lz bar.o] searches library [z] after file [foo.o] but before [bar.o]. If bar.o refers to functions in [z], those functions may not be loaded.
+				 *
+				 * The linker searches a standard list of directories plus any that you specify with [-L] for the library, which is actually a file named [liblibrary.a]=[a file name library surrounded with lib and .a].
+				 */
+				//  "-l",
+				//  "fmt",
+				/**
+				 * Below is the executable file's name
+				 */
+				"-o", // e.g., -o file1. This means placing the primary output in file [file1].
+				"${workspaceFolder}/Cplusplus/bin/project_entry_O3_NDEBUG"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}" // Define the cwd command, such as ${fileDirname}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"detail": "compiler: /usr/bin/g++"
+		},
+		{
+			"type": "shell",
+			"label": "C/C++: g++ build the active unit test",
+			"command": "/usr/bin/g++", // The path of compiler
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g", // Produce debugging information in the operationg system's native format
+				"-Wall", // Turns on all optional warnings which are desirable for normal code
+				"-Werror", // Make all warnings into hard errors. Source code which triggers warnings will be rejected
+				"-fopenmp", // Enables #pragma omp in source code
+				//"-std=c++17", // c++11/c++17
+				/**
+				 * Below are predefine names:
+				 * e.g., -D name. Predefine [name] as a macro, with definition 1.
+				 */
+				// "-D",
+				// "NDEBUG",
+				/**
+				 * Below are header files: (can be from multiples folders)
+				 */
+				"-I", // e.g., -I dir. This means adding the directory [dir] to the list of directories to be searched for header files during preprocessing
+				"${workspaceFolder}/Cplusplus/include/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/LinkedList/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/NumericProgression/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/Vector/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/Array/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/include/SortingAlgorithm/",
+				"-L", // e.g., -L dir. Add directory [dir] to the list of directories to be searched for [-l].
+				"/usr/local/include/gtest/",
+				"-L",
+				"/usr/include/HippoMocks/hippomocks.h",
+				/**
+				 * Below are source files: (can be from multiples folders)
+				 */
+				"${workspaceFolder}/Cplusplus/source/LinkedList/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/NumericProgression/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/Vector/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/Array/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/SortingAlgorithm/*.cpp",
+				"${workspaceFolder}/Cplusplus/source/ProjectConfiguration.cpp",
+				"${file}",
+				/**
+				 * Below are library names:
+				 * e.g., -l library. Search the library named [library] when linking.
+				 * 
+				 * The linker searches and processes libraries and object files in the order they are specified.
+				 * Thus, [foo.o -lz bar.o] searches library [z] after file [foo.o] but before [bar.o]. If bar.o refers to functions in [z], those functions may not be loaded.
+				 *
+				 * The linker searches a standard list of directories plus any that you specify with [-L] for the library, which is actually a file named [liblibrary.a]=[a file name library surrounded with lib and .a].
+				 */
+				"-l",
+				"gtest",
+				"-l",
+				"gtest_main",
+				"-l",
+				"gmock",
+				"-l",
+				"gmock_main",
+				/**
+				 * Below is the executable file's name
+				 */
+				"-o", // e.g., -o file1. This means placing the primary output in file [file1].
+				"${workspaceFolder}/Cplusplus/bin/${fileBasenameNoExtension}"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}" // Define the cwd command, such as ${fileDirname}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"detail": "compiler: /usr/bin/g++"
+		},
+		{
+			"type": "shell",
+			"label": "C/C++: clang build this project in default optimization",
+			"command": "/usr/bin/clang++", // The path of compiler
+			"args": [
+				//"-fdiagnostics-color=always",
+				//"-O3",	// O1/O2/O3
+				"-g",
+				"-Wall",
+				// "-MM",
+				// "-MT",
+				//"-fopenmp",
+				//"-std=c++17", // c++11/c++17
+				"-I", // e.g., -I dir. This means adding the directory dir to the list of directories to be searched for header files during preprocessing
+				"${workspaceFolder}/Cplusplus/Include/",
+				"-I",
+				"${workspaceFolder}/Cplusplus/Include/LinkedList/",
+				// Below are input files (can be from multiples folders)
+				"${workspaceFolder}/Cplusplus/Source/LinkedList/*.cpp",
+				"${workspaceFolder}/Cplusplus/Source/*.cpp",
+				// Below is the executable file's name
+				"-o",
+				"${workspaceFolder}/Cplusplus/bin/project_entry"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}" // Define the cwd command, such as ${fileDirname}
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"detail": "compiler: /usr/bin/clang++"
+		},
+		{
+			"type": "shell",
+			"label": "Remove build files",
+			"command": "rm",
+			"args": [
+				"-f",
+				"Cplusplus/bin/*"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		}
+	]
+}

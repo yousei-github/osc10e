@@ -1,0 +1,97 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Debug this project",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Cplusplus/bin/project_entry", // the executable file's name for debugging
+            "args": [
+                "--help",
+            ],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            //"preLaunchTask": "C/C++: g++ build this project in default optimization",
+            "miDebuggerPath": "/usr/bin/gdb" // The path of debugger. e.g., /usr/local/bin/gdb, /usr/bin/gdb
+        },
+        {
+            "name": "(gdb) Debug the active test",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Cplusplus/bin/${fileBasenameNoExtension}", // the executable file's name for debugging
+            "args": [
+                "--gtest_shuffle", // Randomize tests' orders on every iteration.
+                "--gtest_break_on_failure", // Turn assertion failures into debugger break-points.
+            ],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            //"preLaunchTask": "C/C++: g++ build this project in default optimization",
+            "miDebuggerPath": "/usr/bin/gdb" // The path of debugger. e.g., /usr/local/bin/gdb, /usr/bin/gdb
+        },
+        {
+            "name": "Python: Current File", // Provides the name for the debug configuration that appears in the VS Code dropdown list.
+            "type": "python", // Identifies the type of debugger to use; leave this set to python for Python code.
+            "python": "${command:python.interpreterPath}", // The full path that points to the Python interpreter to be used for debugging
+            "pythonArgs": [], // Specifies arguments to pass to the Python interpreter
+            "request": "launch", // Specifies the mode in which to start debugging
+            "program": "${file}",
+            "args": [
+                "--port",
+                "1593"
+            ],
+            "console": "integratedTerminal",
+            "stopOnEntry": true,
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Specified File", // Provides the name for the debug configuration that appears in the VS Code dropdown list.
+            "type": "python", // Identifies the type of debugger to use; leave this set to python for Python code.
+            "python": "${command:python.interpreterPath}", // The full path that points to the Python interpreter to be used for debugging
+            "pythonArgs": [], // Specifies arguments to pass to the Python interpreter
+            "request": "launch", // Specifies the mode in which to start debugging
+            "program": "${workspaceFolder}/Python/IntroToPython/Chapter02/Calculator_TwoOperands.py",
+            "args": [
+                "--port",
+                "1593"
+            ],
+            "console": "integratedTerminal",
+            "stopOnEntry": true,
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true
+        },
+    ]
+}

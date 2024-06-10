@@ -1,0 +1,33 @@
+{
+    "configurations": [
+        {
+            "name": "(Linux) Project",
+            "includePath": [
+                "${workspaceFolder}",
+                "/lib/modules/6.5.0-35-generic/build/include/", // The path of kernel module header
+                "/usr/include/"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        },
+        {
+            "name": "(Linux) Test",
+            "includePath": [
+                "${workspaceFolder}",
+                "/lib/modules/6.5.0-35-generic/build/include/",
+                "/usr/include/"
+            ],
+            "defines": [
+                "LOGICAL_VERIFICATION"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
