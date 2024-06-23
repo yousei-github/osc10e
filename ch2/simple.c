@@ -1,9 +1,7 @@
 /**
  * simple.c
  *
- * A simple kernel module. 
- * 
- * To compile, run makefile by entering "make".
+ * A simple kernel module that illustrates the basic of kernel module
  * 
  * @note
  * The makefile must be modified to compile this program.
