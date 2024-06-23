@@ -1,6 +1,12 @@
 {
     "files.associations": {
-        "init.h": "c"
+        "init.h": "c",
+        "cstdlib": "c",
+        "module.h": "c",
+        "kernel.h": "c",
+        "hash.h": "c",
+        "param.h": "c",
+        "jiffies.h": "c"
     },
     "editor.tabSize": 4,
     "editor.indentSize": "tabSize",
