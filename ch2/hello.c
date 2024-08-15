@@ -14,33 +14,39 @@
  * Copyright John Wiley & Sons - 2018
  */
 
+/* Header */
 #include <asm/uaccess.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/proc_fs.h>
 
+/* Macro */
+
 #define BUFFER_SIZE 128
 
 #define PROC_NAME   "hello"
 #define MESSAGE     "Hello World\n"
 
-/**
- * Function prototypes
- */
+/* Type */
+
+/* Prototype */
+
 static ssize_t proc_read(struct file* file, char* buf, size_t count, loff_t* pos);
 
-// static struct file_operations proc_ops = {
-//     .owner = THIS_MODULE,
-//     .read  = proc_read,
-// };
+/* Variable */
 
+/** 
+ * It contains a reference to a struct proc filesystem operations. This struct initializes the .proc_flags and .proc_read members. 
+ * The value of .proc_read is the name of the function proc_read() that is to be called whenever /proc/hello is read.
+ */
 static struct proc_ops proc_ops = {
     .proc_flags = 0,
     .proc_read  = proc_read,
 };
 
-/* This function is called when the module is loaded. */
+/* Function */
+/** This function is called when the module is loaded. */
 static int proc_init(void)
 {
     /** 
@@ -54,7 +60,7 @@ static int proc_init(void)
     return 0;
 }
 
-/* This function is called when the module is removed. */
+/** This function is called when the module is removed. */
 static void proc_exit(void)
 {
     // Removes the /proc/hello entry
@@ -64,6 +70,7 @@ static void proc_exit(void)
 }
 
 /**
+ * @brief
  * This function is called each time the /proc/hello is read.
  * 
  * This function is called repeatedly until it returns 0, so
@@ -71,12 +78,10 @@ static void proc_exit(void)
  * once it has collected the data that is to go into the 
  * corresponding /proc file.
  *
- * params:
- *
- * file:
- * buf: buffer in user space
- * count:
- * pos:
+ * @param[in] file
+ * @param[in] buf buffer in user space
+ * @param[in] count
+ * @param[in] pos
  */
 static ssize_t proc_read(struct file* file, char __user* usr_buf, size_t count, loff_t* pos)
 {
@@ -92,9 +97,10 @@ static ssize_t proc_read(struct file* file, char __user* usr_buf, size_t count, 
 
     completed                = 1;
 
+    // The string "Hello World∖n" is written to the variable buffer where buffer exists in kernel memory.
     rv                       = sprintf(buffer, "Hello World\n");
 
-    // Copies the contents of buffer to userspace usr_buf
+    // Copies the contents of kernel memory buffer to to the variable usr_buf, which exists in user space.
     const unsigned int error = copy_to_user(usr_buf, buffer, rv);
 
     if (error)

@@ -6,7 +6,8 @@
         "kernel.h": "c",
         "hash.h": "c",
         "param.h": "c",
-        "jiffies.h": "c"
+        "jiffies.h": "c",
+        "gcd.h": "c"
     },
     "editor.tabSize": 4,
     "editor.indentSize": "tabSize",

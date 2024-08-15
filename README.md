@@ -17,7 +17,7 @@ which will clone this repository on your local machine.
 -- Greg Gagne June 2018.
 
 # Build and Debug the C Program
-A gcc compiler is required for compilation. To download the required compiler (e.g., gcc-11), input the below command,:
+A gcc compiler is required for compilation. To download the required compiler (e.g., gcc-11), input the below command,
 ```sh
 sudo apt install --reinstall gcc-Xxx # Xxx is the version number
 ```

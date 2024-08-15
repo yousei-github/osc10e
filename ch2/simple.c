@@ -73,7 +73,7 @@ unsigned long startTime, endTime; // unit is us
 
 /* Function */
 
-/* This function is called when the module is loaded. */
+/** This function is called when the module is loaded. */
 static int simple_init(void)
 {
     /** 
@@ -97,7 +97,7 @@ static int simple_init(void)
     return 0;
 }
 
-/* This function is called when the module is removed. */
+/** This function is called when the module is removed. */
 static void simple_exit(void)
 {
     endTime = jiffies * (ONE_SECOND_COUNT / HZ);
@@ -107,7 +107,7 @@ static void simple_exit(void)
     printk(KERN_INFO "Removing the Simple Module\n");
 }
 
-/* Macros for registering module entry and exit points. */
+/** Macros for registering module entry and exit points. */
 module_init(simple_init); // The module entry point, which represents the function that is invoked when the module is loaded into the kernel
 module_exit(simple_exit); // The module exit point, which represents the function that is called when the module is removed from the kernel
 
