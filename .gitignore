@@ -3,11 +3,14 @@
 /bin/
 
 # ignore the specified type of files (.stats/.statistics/.trace/Dockerfile/.sh)
-.DS_Store
-a.out
-*.class
 *.cmd
-/*.statistics
+*.ko
+*.mod
+*.mod.c
+*.mod.o
+*.o
+*.symvers
+*.order
 # /Dockerfile
 # /*.sh
 

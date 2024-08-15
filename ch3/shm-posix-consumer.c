@@ -1,9 +1,11 @@
 /**
+ * @brief POSIX Shared Memory
+ * 
  * Simple program demonstrating shared memory in POSIX systems.
  *
- * This is the consumer process
+ * This is the consumer process reads and outputs the contents of the shared memory.
  *
- * Figure 3.18
+ * Figure 3.17
  *
  * To compile, enter
  *	gcc shm-posix-consumer.c -lrt
@@ -13,45 +15,56 @@
  * Copyright John Wiley & Sons - 2018
  */
 
+/* Header */
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
+#include <sys/mman.h>
 #include <sys/shm.h>
 #include <sys/stat.h>
-#include <sys/mman.h>
+#include <unistd.h>
+
+/* Macro */
+
+/* Type */
+
+/* Prototype */
+
+/* Variable */
+
+/* Function */
 
 int main()
 {
-	const char *name = "OS";
-	const int SIZE = 4096;
+    const char* name = "OS";
+    const int SIZE   = 4096;
 
-	int shm_fd;
-	void *ptr;
-	int i;
+    /** Open the shared memory segment */
+    const int shm_fd = shm_open(name, O_RDONLY, 0666);
+    if (shm_fd == -1)
+    {
+        printf("shared memory failed\n");
+        exit(-1);
+    }
+    printf("Open shared memory segment successful, file descriptor is %d\n", shm_fd);
 
-	/* open the shared memory segment */
-	shm_fd = shm_open(name, O_RDONLY, 0666);
-	if (shm_fd == -1) {
-		printf("shared memory failed\n");
-		exit(-1);
-	}
+    /* Now map the shared memory segment in the address space of the process */
+    void* ptr = mmap(0, SIZE, PROT_READ, MAP_SHARED, shm_fd, 0);
+    if (ptr == MAP_FAILED)
+    {
+        printf("Map failed\n");
+        exit(-1);
+    }
 
-	/* now map the shared memory segment in the address space of the process */
-	ptr = mmap(0,SIZE, PROT_READ, MAP_SHARED, shm_fd, 0);
-	if (ptr == MAP_FAILED) {
-		printf("Map failed\n");
-		exit(-1);
-	}
+    /* Now read from the shared memory region */
+    printf("%s", (char*) ptr);
 
-	/* now read from the shared memory region */
-	printf("%s",(char *)ptr);
+    /* Remove the shared memory segment by invoking the shm_unlink() */
+    if (shm_unlink(name) == -1)
+    {
+        printf("Error removing %s\n", name);
+        exit(-1);
+    }
 
-	/* remove the shared memory segment */
-	if (shm_unlink(name) == -1) {
-		printf("Error removing %s\n",name);
-		exit(-1);
-	}
-
-	return 0;
+    return EXIT_SUCCESS;
 }

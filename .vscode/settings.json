@@ -7,7 +7,9 @@
         "hash.h": "c",
         "param.h": "c",
         "jiffies.h": "c",
-        "gcd.h": "c"
+        "gcd.h": "c",
+        "mman.h": "c",
+        "shm.h": "c"
     },
     "editor.tabSize": 4,
     "editor.indentSize": "tabSize",

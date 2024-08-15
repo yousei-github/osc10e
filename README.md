@@ -26,7 +26,7 @@ sudo apt install --reinstall gcc-Xxx # Xxx is the version number
 Build methods are explained below.
 
 ### 1. Make-based Method.
-Input the below command to build the source code,
+Input the below command to build the source code of kernel modules (e.g., chapter 2),
 ```sh
 cd path-to-code/
 make
@@ -36,3 +36,8 @@ Also, if you want to clean the output files, input the below command,
 ```sh
 make clean
 ```
+
+### 2. Visual Studio Code-based Method.
+- You may need to modify the compiler's path in the `tasks.json` file in the `.vscode` directory.
+- Select (or activate) the file containing the source code to compile.
+- Click `Run Build Task` in the `Terminal` tab.

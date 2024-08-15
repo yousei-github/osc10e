@@ -10,6 +10,11 @@
  * The /proc file system is a "pseudo" file system that exists only in kernel memory,
  * and is used primarily for querying various kernel and per-process statistics.
  * 
+ * After loaded the kernel module, enters the command
+ * [cat /proc/hello]
+ * 
+ * the infamous Hello World message is returned.
+ * 
  * Operating System Concepts - 10th Edition
  * Copyright John Wiley & Sons - 2018
  */
@@ -23,7 +28,7 @@
 
 /* Macro */
 
-#define BUFFER_SIZE 128
+#define BUFFER_SIZE (128u)
 
 #define PROC_NAME   "hello"
 #define MESSAGE     "Hello World\n"
@@ -85,7 +90,6 @@ static void proc_exit(void)
  */
 static ssize_t proc_read(struct file* file, char __user* usr_buf, size_t count, loff_t* pos)
 {
-    int rv = 0;
     char buffer[BUFFER_SIZE];
     static int completed = 0;
 
@@ -95,20 +99,22 @@ static ssize_t proc_read(struct file* file, char __user* usr_buf, size_t count, 
         return 0;
     }
 
-    completed                = 1;
+    completed                     = 1;
 
     // The string "Hello World∖n" is written to the variable buffer where buffer exists in kernel memory.
-    rv                       = sprintf(buffer, "Hello World\n");
+    int numberOfCharactersWritten = sprintf(buffer, "Hello World\n");
+
+    printk(KERN_INFO "numberOfCharactersWritten is %d\n", numberOfCharactersWritten);
 
     // Copies the contents of kernel memory buffer to to the variable usr_buf, which exists in user space.
-    const unsigned int error = copy_to_user(usr_buf, buffer, rv);
+    const unsigned int error = copy_to_user(usr_buf, buffer, numberOfCharactersWritten);
 
     if (error)
     {
         printk(KERN_INFO "Copy Error: error code is %u\n", error);
     }
 
-    return rv;
+    return numberOfCharactersWritten;
 }
 
 /* Macros for registering module entry and exit points. */
