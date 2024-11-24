@@ -4,24 +4,24 @@
  * A simple kernel module that illustrates the basic of kernel module
  * 
  * @note
- * The makefile must be modified to compile this program.
- * Add "simple.o" to the [obj-m] variable so the compiler knows what to build.
+ * (1) The makefile must be modified to compile this program.
+ * Add "1_simple.o" to the [obj-m] variable so the compiler knows what to build.
  * 
- * Kernel modules are loaded using the insmod command like,
+ * (2) Kernel modules are loaded using the insmod command like,
  * [sudo insmod simple.ko]
  * 
- * To check whether the module has loaded, enter the [lsmod] command and search for the module simple.
+ * (3) To check whether the module has loaded, enter the [lsmod] command and search for the module simple.
  * 
- * To check the contents of this message in the kernel log buffer, enter the command
+ * (4) To check the contents of this message in the kernel log buffer, enter the command
  * [sudo dmesg]
  * You should see the message "Loading the Simple Module."
  * 
- * Because the kernel log buffer can fill up quickly, it often makes sense to clear the buffer periodically:
+ * (5) Because the kernel log buffer can fill up quickly, it often makes sense to clear the buffer periodically:
  * [sudo dmesg -c]
  * 
  * The compilation produces several files. The file simple.ko represents the compiled kernel module.
  * 
- * Removing the kernel module involves invoking the rmmod command (notice that the .ko suffix is unnecessary):
+ * (6) Removing the kernel module involves invoking the rmmod command (notice that the .ko suffix is unnecessary):
  * [sudo rmmod simple]
  *
  * Operating System Concepts - 10th Edition

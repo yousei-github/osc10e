@@ -4,7 +4,7 @@
             "name": "(Linux) Project",
             "includePath": [
                 "${workspaceFolder}",
-                "/lib/modules/6.5.0-45-generic/build/include/", // The path of kernel module header
+                "/lib/modules/6.8.0-48-generic/build/include/", // The path of kernel module header
                 "/usr/include/"
             ],
             "defines": [],
@@ -17,7 +17,7 @@
             "name": "(Linux) Test",
             "includePath": [
                 "${workspaceFolder}",
-                "/lib/modules/6.5.0-35-generic/build/include/",
+                "/lib/modules/6.8.0-48-generic/build/include/",
                 "/usr/include/"
             ],
             "defines": [

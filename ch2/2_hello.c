@@ -4,13 +4,13 @@
  * Kernel module that communicates with /proc file system.
  * 
  * @note
- * The makefile must be modified to compile this program.
- * Add "hello.o" to the [obj-m] variable so the compiler knows what to build.
+ * (1) The makefile must be modified to compile this program.
+ * Add "2_hello.o" to the [obj-m] variable so the compiler knows what to build.
  *
  * The /proc file system is a "pseudo" file system that exists only in kernel memory,
  * and is used primarily for querying various kernel and per-process statistics.
  * 
- * After loaded the kernel module, enters the command
+ * (2) After loaded the kernel module, enters the command
  * [cat /proc/hello]
  * 
  * the infamous Hello World message is returned.
