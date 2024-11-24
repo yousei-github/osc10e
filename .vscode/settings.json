@@ -9,7 +9,9 @@
         "jiffies.h": "c",
         "gcd.h": "c",
         "mman.h": "c",
-        "shm.h": "c"
+        "shm.h": "c",
+        "unistd.h": "c",
+        "stdint.h": "c"
     },
     "editor.tabSize": 4,
     "editor.indentSize": "tabSize",
