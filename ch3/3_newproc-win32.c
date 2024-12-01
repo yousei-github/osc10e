@@ -8,8 +8,20 @@
  * Copyright John Wiley & Sons - 2018
  */
 
+/* Header */
+
 #include <stdio.h>
 #include <windows.h>
+
+/* Macro */
+
+/* Type */
+
+/* Prototype */
+
+/* Variable */
+
+/* Function */
 
 int main(VOID)
 {

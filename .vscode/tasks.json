@@ -72,6 +72,34 @@
 			"detail": "compiler: /usr/bin/gcc"
 		},
 		{
+			"type": "cppbuild",
+			"label": "C/C++: The cl.exe builds the active file in default optimization",
+			"command": "cl.exe",
+			"args": [
+				"/Zi", // Generates complete debugging information.
+				"-openmp",
+				// "/I", // e.g., /I directory. Searches a directory for include files.
+				// "${workspaceFolder}\\Codes_C\\inc\\",
+				// Below are input files (can be from multiples folders)
+				"${fileDirname}\\${fileBasename}",
+				"/Fo:", // e.g., /Fo: pathname. Specifies an object (.obj) file name or directory to be used
+				"${workspaceFolder}\\bin\\",
+				"/Fe:", // e.g., /Fe: pathname. Renames the executable file.
+				"${workspaceFolder}\\bin\\${fileBasename}.exe"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}" // define the cwd command, such as ${fileDirname}
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"detail": "compiler: cl.exe"
+		},
+		{
 			"type": "shell",
 			"label": "Remove build files of Makefile",
 			"command": "make",
