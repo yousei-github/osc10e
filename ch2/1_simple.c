@@ -8,7 +8,7 @@
  * Add "1_simple.o" to the [obj-m] variable so the compiler knows what to build.
  * 
  * (2) Kernel modules are loaded using the insmod command like,
- * [sudo insmod simple.ko]
+ * [sudo insmod 1_simple.ko]
  * 
  * (3) To check whether the module has loaded, enter the [lsmod] command and search for the module simple.
  * 
@@ -22,7 +22,7 @@
  * The compilation produces several files. The file simple.ko represents the compiled kernel module.
  * 
  * (6) Removing the kernel module involves invoking the rmmod command (notice that the .ko suffix is unnecessary):
- * [sudo rmmod simple]
+ * [sudo rmmod 1_simple]
  *
  * Operating System Concepts - 10th Edition
  * Copyright John Wiley & Sons - 2018
@@ -39,24 +39,31 @@
 
 /* Macro */
 
+/** We define these the same for all machines */
+#define EXIT_FAILURE              1 /* Failing exit status */
+#define EXIT_SUCCESS              0 /* Successful exit status */
+
 /** @brief For Timer */
 #define ONE_SECOND_IN_MILLISECOND (1000u)
 #define ONE_SECOND_IN_MICROSECOND (1000000u)
 
 #define CLOCK_RATE_THRESHOLD      (1000u)
 
+/**
+ * @note
+ * In Linux, the rate at which the timer ticks (the tick rate) is the value HZ defined in <asm/param.h>.
+ * The value of HZ determines the frequency of the timer interrupt, and its value varies by machine type and architecture.
+ * For example, if the value of HZ is 100, a timer interrupt occurs 100 times per second, or every 10 milliseconds.
+ */
 #ifdef HZ
 
 #if (HZ < CLOCK_RATE_THRESHOLD)
-
 #define ONE_SECOND_COUNT ONE_SECOND_IN_MILLISECOND
 #define TIME_UNIT        "ms"
 
 #else
-
 #define TIME_UNIT        "us"
 #define ONE_SECOND_COUNT ONE_SECOND_IN_MICROSECOND
-
 #endif /* HZ < CLOCK_RATE_THRESHOLD */
 
 #else
@@ -69,11 +76,11 @@
 
 /* Variable */
 
-unsigned long startTime, endTime; // unit is us
+unsigned long startTime, endTime; // Unit is us
 
 /* Function */
 
-/** This function is called when the module is loaded. */
+/** This function is called when the module is loaded */
 static int simple_init(void)
 {
     /** 
@@ -90,14 +97,19 @@ static int simple_init(void)
 
     printk(KERN_INFO "The tick rate is %u Hz\n", HZ);
 
+    /**
+     * @note
+     * Additionally, the kernel keeps track of the global variable jiffies, which maintains the number of timer interrupts that have occurred since the system was booted.
+     * The jiffies variable is declared in the file <linux/jiffies.h>.
+     */
     startTime = jiffies * (ONE_SECOND_COUNT / HZ);
 
     printk(KERN_INFO "The start time is %lu %s\n", startTime, TIME_UNIT);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
-/** This function is called when the module is removed. */
+/** This function is called when the module is removed */
 static void simple_exit(void)
 {
     endTime = jiffies * (ONE_SECOND_COUNT / HZ);
@@ -107,7 +119,9 @@ static void simple_exit(void)
     printk(KERN_INFO "Removing the Simple Module\n");
 }
 
-/** Macros for registering module entry and exit points. */
+/* Kernel module Setting */
+
+/** Macros for registering module entry and exit points */
 module_init(simple_init); // The module entry point, which represents the function that is invoked when the module is loaded into the kernel
 module_exit(simple_exit); // The module exit point, which represents the function that is called when the module is removed from the kernel
 

@@ -28,10 +28,14 @@
 
 /* Macro */
 
-#define BUFFER_SIZE (128u)
+/** We define these the same for all machines */
+#define EXIT_FAILURE 1 /* Failing exit status */
+#define EXIT_SUCCESS 0 /* Successful exit status */
 
-#define PROC_NAME   "hello"
-#define MESSAGE     "Hello World\n"
+#define BUFFER_SIZE  (128u)
+
+#define PROC_NAME    "hello"
+#define MESSAGE      "Hello World\n"
 
 /* Type */
 
@@ -42,7 +46,7 @@ static ssize_t proc_read(struct file* file, char* buf, size_t count, loff_t* pos
 /* Variable */
 
 /** 
- * It contains a reference to a struct proc filesystem operations. This struct initializes the .proc_flags and .proc_read members. 
+ * It contains a reference to a struct /proc filesystem operations. This struct initializes the .proc_flags and .proc_read members. 
  * The value of .proc_read is the name of the function proc_read() that is to be called whenever /proc/hello is read.
  */
 static struct proc_ops proc_ops = {
@@ -51,7 +55,8 @@ static struct proc_ops proc_ops = {
 };
 
 /* Function */
-/** This function is called when the module is loaded. */
+
+/** This function is called when the module is loaded */
 static int proc_init(void)
 {
     /** 
@@ -62,10 +67,10 @@ static int proc_init(void)
 
     printk(KERN_INFO "/proc/%s created\n", PROC_NAME);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
-/** This function is called when the module is removed. */
+/** This function is called when the module is removed */
 static void proc_exit(void)
 {
     // Removes the /proc/hello entry
@@ -78,10 +83,7 @@ static void proc_exit(void)
  * @brief
  * This function is called each time the /proc/hello is read.
  * 
- * This function is called repeatedly until it returns 0, so
- * there must be logic that ensures it ultimately returns 0
- * once it has collected the data that is to go into the 
- * corresponding /proc file.
+ * This function is called repeatedly until it returns 0, so there must be logic that ensures it ultimately returns 0 once it has collected the data that is to go into the corresponding /proc file.
  *
  * @param[in] file
  * @param[in] buf buffer in user space
@@ -117,7 +119,9 @@ static ssize_t proc_read(struct file* file, char __user* usr_buf, size_t count, 
     return numberOfCharactersWritten;
 }
 
-/* Macros for registering module entry and exit points. */
+/* Kernel module Setting */
+
+/** Macros for registering module entry and exit points */
 module_init(proc_init); // The module entry point, which represents the function that is invoked when the module is loaded into the kernel
 module_exit(proc_exit); // The module exit point, which represents the function that is called when the module is removed from the kernel
 

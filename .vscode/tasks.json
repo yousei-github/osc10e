@@ -7,6 +7,7 @@
 			"command": "make", // The path of compiler
 			"args": [
 				"all",
+				"argument1=${fileBasenameNoExtension}.o",
 			],
 			"options": {
 				"cwd": "${fileDirname}" // Define the cwd command, such as ${fileDirname}
@@ -72,7 +73,7 @@
 		},
 		{
 			"type": "shell",
-			"label": "Remove build files for the active file of Makefile",
+			"label": "Remove build files of Makefile",
 			"command": "make",
 			"args": [
 				"clean"

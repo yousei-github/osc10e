@@ -1,4 +1,7 @@
-obj-m += 2_hello.o
+# Input the object name in argument1 for build
+
+obj-m += $(argument1) # For example, obj-m += 1_simple.o (or 2_hello.o)
+
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 clean:
