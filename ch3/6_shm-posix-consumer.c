@@ -5,7 +5,7 @@
  *
  * This is the consumer process reads and outputs the contents of the shared memory.
  *
- * Figure 3.17
+ * Figure 3.17 Consumer process illustrating POSIX shared-memory API.
  *
  * To compile, enter
  *	gcc shm-posix-consumer.c -lrt
@@ -16,6 +16,7 @@
  */
 
 /* Header */
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,16 +40,16 @@ int main()
     const char* name = "OS";
     const int SIZE   = 4096;
 
-    /** Open the shared memory segment */
-    const int shm_fd = shm_open(name, O_RDONLY, 0666);
+    /** (1) Open the shared memory segment */
+    const int shm_fd = shm_open(name, O_RDONLY, 0440);
     if (shm_fd == -1)
     {
-        printf("shared memory failed\n");
+        printf("Open shared memory failed\n");
         exit(-1);
     }
     printf("Open shared memory segment successful, file descriptor is %d\n", shm_fd);
 
-    /* Now map the shared memory segment in the address space of the process */
+    /** (2) Now map the shared memory segment in the address space of the process */
     void* ptr = mmap(0, SIZE, PROT_READ, MAP_SHARED, shm_fd, 0);
     if (ptr == MAP_FAILED)
     {
@@ -56,10 +57,10 @@ int main()
         exit(-1);
     }
 
-    /* Now read from the shared memory region */
+    /** (3) Now read from the shared memory region */
     printf("%s", (char*) ptr);
 
-    /* Remove the shared memory segment by invoking the shm_unlink() */
+    /** (4) Remove the shared memory segment by invoking the shm_unlink() */
     if (shm_unlink(name) == -1)
     {
         printf("Error removing %s\n", name);
