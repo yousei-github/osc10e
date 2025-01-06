@@ -12,7 +12,8 @@
         "shm.h": "c",
         "unistd.h": "c",
         "stdint.h": "c",
-        "errno.h": "c"
+        "errno.h": "c",
+        "types.h": "c"
     },
     "editor.tabSize": 4,
     "editor.indentSize": "tabSize",

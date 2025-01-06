@@ -1,6 +1,7 @@
 /**
  * @brief POSIX Shared Memory
  * 
+ * @details
  * Simple program demonstrating shared memory in POSIX systems.
  *
  * This is the producer process that writes to the shared memory region.
