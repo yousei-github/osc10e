@@ -11,6 +11,7 @@
 /* Header */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <windows.h>
 
 /* Macro */
@@ -42,11 +43,11 @@ int main(VOID)
             NULL,                                 // Use parent's environment block.
             NULL,                                 // Use parent's starting directory.
             &si,                                  // Pointer to STARTUPINFO structure.
-            &pi)                                  // Pointer to PROCESS_INFORMATION structure.
-    )
+            &pi                                   // Pointer to PROCESS_INFORMATION structure.
+            ))
     {
         printf("CreateProcess failed (%d).\n", GetLastError());
-        return -1;
+        return EXIT_FAILURE;
     }
 
     // Wait until child process exits.
@@ -55,4 +56,6 @@ int main(VOID)
     // Close process and thread handles.
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
+
+    return EXIT_SUCCESS;
 }
