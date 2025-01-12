@@ -32,8 +32,18 @@
 
 /* Function */
 
-int main(VOID)
+int main(int argc, char** argv)
 {
+    /** @note Process the input parameters */
+    if (argc < 2)
+    {
+        printf(
+            "Usage: %s <Pipe Child Executable File Path>\n"
+            "Example: %s .\\bin\\9_win32-pipe-child.c.exe\n",
+            argv[0], argv[0]);
+        return EXIT_SUCCESS;
+    }
+
     HANDLE ReadHandle, WriteHandle;
 
     STARTUPINFO si;
@@ -43,9 +53,9 @@ int main(VOID)
     DWORD written;
 
     /** 
-  * Set up security attributes (SECURITY_ATTRIBUTES structure) so that pipe handles are inherited,
-  * and then redirecting the child process's handles for standard input or standard output to the read or write handle of the pipe.
- */
+     * Set up security attributes (SECURITY_ATTRIBUTES structure) so that pipe handles are inherited,
+     * and then redirecting the child process's handles for standard input or standard output to the read or write handle of the pipe.
+     */
     SECURITY_ATTRIBUTES sa = {sizeof(SECURITY_ATTRIBUTES), NULL, TRUE};
 
     /* Create the pipe */
@@ -71,16 +81,17 @@ int main(VOID)
     SetHandleInformation(WriteHandle, HANDLE_FLAG_INHERIT, 0);
 
     /* Create the child process */
-    if (! CreateProcess(NULL,                   // No module name (use command line).
-            ".\\bin\\9_win32-pipe-child.c.exe", // Command line.
-            NULL,                               // Process handle not inheritable.
-            NULL,                               // Thread handle not inheritable.
-            TRUE,                               // The child process is to inherit designated handles from its parent
-            0,                                  // No creation flags.
-            NULL,                               // Use parent's environment block.
-            NULL,                               // Use parent's starting directory.
-            &si,                                // Pointer to STARTUPINFO structure.
-            &pi                                 // Pointer to PROCESS_INFORMATION structure.
+    if (! CreateProcess(
+            NULL,    // No module name (use command line).
+            argv[1], // Command line.
+            NULL,    // Process handle not inheritable.
+            NULL,    // Thread handle not inheritable.
+            TRUE,    // The child process is to inherit designated handles from its parent
+            0,       // No creation flags.
+            NULL,    // Use parent's environment block.
+            NULL,    // Use parent's starting directory.
+            &si,     // Pointer to STARTUPINFO structure.
+            &pi      // Pointer to PROCESS_INFORMATION structure.
             ))
     {
         fprintf(stderr, "Process Creation Failed\n");

@@ -113,16 +113,30 @@
 		},
 		{
 			"type": "shell",
-			"label": "Remove build files",
+			"label": "Remove build files for Linux",
 			"command": "rm",
 			"args": [
-				"-f",
+				"-r", // Remove the directory and its contents recursively
+				"-f", // Force removal and never prompt for confirmation
 				"bin/*"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
 			"problemMatcher": []
-		}
+		},
+		{
+			"type": "shell",
+			"label": "Remove build files for Windows",
+			"command": "rd",
+			"args": [
+				"-r", // Remove contents recursively
+				".\\bin\\*"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
 	]
 }
