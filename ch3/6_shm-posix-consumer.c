@@ -1,5 +1,9 @@
 /**
- * @brief POSIX Shared Memory
+ * @file
+ * shm-posix-consumer.c
+ * 
+ * @brief
+ * POSIX Shared Memory
  * 
  * @details
  * Simple program demonstrating shared memory in POSIX systems.
@@ -15,6 +19,10 @@
  * Operating System Concepts - Tenth Edition
  * Copyright John Wiley & Sons - 2018
  */
+
+#ifndef __linux__
+#error "Must be using Linux kernel!"
+#endif /* __linux__ */
 
 /* Header */
 

@@ -1,6 +1,8 @@
 /**
+ * @file
  * simple.c
  *
+ * @details
  * A simple kernel module that illustrates the basic of kernel module
  * 
  * @note
@@ -28,7 +30,12 @@
  * Copyright John Wiley & Sons - 2018
  */
 
+#ifndef __linux__
+#error "Must be using Linux kernel!"
+#endif /* __linux__ */
+
 /* Header */
+
 #include <asm/param.h>
 #include <linux/gcd.h>
 #include <linux/hash.h>

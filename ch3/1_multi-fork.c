@@ -1,8 +1,14 @@
 /**
+ * @file
  * multi-fork.c
  *
+ * @note
  * How many processes are created??
  */
+
+#ifndef __linux__
+#error "Must be using Linux kernel!"
+#endif /* __linux__ */
 
 /* Header */
 
@@ -23,6 +29,7 @@
 
 /* Function */
 
+/** Determine the @p forked_process_ID is parent process ID or not */
 bool is_parent_or_child_process(const uint32_t forked_process_ID)
 {
     return (forked_process_ID == 0) ? false : true;

@@ -1,4 +1,8 @@
 /**
+ * @file
+ * newproc-win32.c
+ * 
+ * @details
  * This program creates a separate process using the CreateProcess() system call.
  *
  * Figure 3.10
@@ -7,6 +11,10 @@
  * Operating System Concepts  - Tenth Edition
  * Copyright John Wiley & Sons - 2018
  */
+
+#ifndef _WIN32
+#error "Must be using Windows (32-bit or 64-bit)!"
+#endif /* _WIN32 */
 
 /* Header */
 

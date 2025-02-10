@@ -1,8 +1,16 @@
 /**
+ * @file
+ * pid.c
+ * 
+ * @details
  * Kernel module that communicates with /proc file system.
  *
  * This provides the base logic for Project 2 - displaying task information
  */
+
+#ifndef __linux__
+#error "Must be using Linux kernel!"
+#endif /* __linux__ */
 
 /* Header */
 

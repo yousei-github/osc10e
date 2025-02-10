@@ -1,5 +1,9 @@
 /**
- * @brief Windows Ordinary Pipes
+ * @file
+ * win32-pipe-parent.c
+ * 
+ * @brief
+ * Windows Ordinary Pipes
  * 
  * @details
  * Simple program demonstrating Win32 anonymous pipes.
@@ -13,6 +17,10 @@
  * Operating System Concepts  - Tenth Edition
  * Copyright John Wiley & Sons - 2018
  */
+
+#ifndef _WIN32
+#error "Must be using Windows (32-bit or 64-bit)!"
+#endif /* _WIN32 */
 
 /* Header */
 

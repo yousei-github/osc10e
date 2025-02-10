@@ -1,5 +1,9 @@
 /**
- * @brief UNIX Ordinary Pipes
+ * @file
+ * unix_pipe.c
+ * 
+ * @brief
+ * UNIX Ordinary Pipes
  * 
  * @details
  * Example program demonstrating UNIX ordinary pipes.
@@ -27,6 +31,10 @@
  * Operating System Concepts  - Tenth Edition
  * Copyright John Wiley & Sons - 2018
  */
+
+#ifndef __linux__
+#error "Must be using Linux kernel!"
+#endif /* __linux__ */
 
 /* Header */
 

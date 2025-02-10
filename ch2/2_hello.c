@@ -1,6 +1,8 @@
 /**
+ * @file
  * hello.c
  *
+ * @details
  * Kernel module that communicates with /proc file system.
  * 
  * @note
@@ -18,6 +20,10 @@
  * Operating System Concepts - 10th Edition
  * Copyright John Wiley & Sons - 2018
  */
+
+#ifndef __linux__
+#error "Must be using Linux kernel!"
+#endif /* __linux__ */
 
 /* Header */
 

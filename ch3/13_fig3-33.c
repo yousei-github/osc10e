@@ -1,15 +1,11 @@
 /**
  * @file
- * newproc-posix.c
+ * fig3-33.c
  * 
  * @details
- * This program forks a separate process using the fork()/exec() system calls.
- *
- * Figure 3.08
- *
- * @author Silberschatz, Galvin, and Gagne
- * Operating System Concepts  - Tenth Edition
- * Copyright John Wiley & Sons - 2018
+ * Explain the circumstances under which the line of code marked printf("LINE J") in Figure 3.33 will be reached.
+ * 
+ * Figure 3.33
  */
 
 #ifndef __linux__
@@ -36,34 +32,27 @@
 
 int main()
 {
-    pid_t pid = getpid();
-    printf("PID (Process Identifier) = %d.\n", pid);
-
     /* Fork a child process */
-    pid = fork();
+    const pid_t pid = fork();
 
     if (pid < 0)
     {
         /* Error occurred */
-        fprintf(stderr, "Fork Failed\n");
+        fprintf(stderr, "Fork Failed");
         return EXIT_FAILURE;
     }
     else if (pid == 0)
     {
         /* Child process */
-        pid = getpid();
-        printf("I am the child %d process\n", pid);
         execlp("/bin/ls", "ls", NULL);
+        printf("LINE J"); // This line won't be executed since the memory of child process is replaced by ls command
     }
     else
     {
         /* Parent process */
-        const pid_t child_pid = pid;
-        pid                   = getpid();
-        /* Parent will wait for the child to complete */
-        printf("I am the parent %d process, my child process is %d\n", pid, child_pid);
-        wait(NULL);
 
+        /* Parent will wait for the child to complete */
+        wait(NULL);
         printf("Child Complete\n");
     }
 

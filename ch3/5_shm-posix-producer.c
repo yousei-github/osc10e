@@ -1,5 +1,9 @@
 /**
- * @brief POSIX Shared Memory
+ * @file
+ * shm-posix-producer.c
+ * 
+ * @brief
+ * POSIX Shared Memory
  * 
  * @details
  * Simple program demonstrating shared memory in POSIX systems.
@@ -17,6 +21,10 @@
  * Operating System Concepts  - Tenth Edition
  * Copyright John Wiley & Sons - 2018
  */
+
+#ifndef __linux__
+#error "Must be using Linux kernel!"
+#endif /* __linux__ */
 
 /* Header */
 
@@ -77,6 +85,8 @@ int main()
      * |5    |101   |r-x   |Read and execute (4 + 1)|
      * |6    |110   |rw-   |Read and write (4 + 2)|
      * |7    |111   |rwx   |Read, write, and execute (4 + 2 + 1)|
+     * 
+     * And, in permissions order has meaning. The user categories are always in user, group, and other order.
      * 
 	 * - A successful call to shm_open() returns an integer file descriptor for the shared-memory object.
 	 */

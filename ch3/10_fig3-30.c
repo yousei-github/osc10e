@@ -1,15 +1,11 @@
 /**
  * @file
- * newproc-posix.c
+ * fig3-30.c
  * 
  * @details
- * This program forks a separate process using the fork()/exec() system calls.
- *
- * Figure 3.08
- *
- * @author Silberschatz, Galvin, and Gagne
- * Operating System Concepts  - Tenth Edition
- * Copyright John Wiley & Sons - 2018
+ * Using the program shown in Figure 3.30, explain what the output will be at LINE A.
+ * 
+ * Figure 3.30
  */
 
 #ifndef __linux__
@@ -32,6 +28,8 @@
 
 /* Variable */
 
+int value = 5;
+
 /* Function */
 
 int main()
@@ -51,21 +49,18 @@ int main()
     else if (pid == 0)
     {
         /* Child process */
-        pid = getpid();
-        printf("I am the child %d process\n", pid);
-        execlp("/bin/ls", "ls", NULL);
+        value += 15;
+        printf("Child process: value = %d\n", value);
+        return EXIT_SUCCESS;
     }
     else
     {
         /* Parent process */
-        const pid_t child_pid = pid;
-        pid                   = getpid();
+
         /* Parent will wait for the child to complete */
-        printf("I am the parent %d process, my child process is %d\n", pid, child_pid);
         wait(NULL);
 
-        printf("Child Complete\n");
+        printf("Parent process: value = %d\n", value); /* LINE A */
+        return EXIT_SUCCESS;
     }
-
-    return EXIT_SUCCESS;
 }
