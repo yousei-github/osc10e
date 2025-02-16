@@ -67,16 +67,25 @@ int main(void)
          * (3) if command included &, parent will invoke wait()
          */
 
-        scanf("%s", user_input); /** @todo How to read multiple parameters at the same line */
+        // Reads a line from the specified stream
+        const char* input_result = fgets(user_input, MAX_USER_INPUT_LENGTH, stdin);
+        if (input_result == NULL)
+        {
+            printf("%s: Input Parameter Error.", __func__);
+            continue;
+        }
 
-        printf("user_input=%s\n", user_input);
+        char* const last_character = &(user_input[strlen(user_input) - 1]);
+        if (*last_character == '\n')
+        {
+            *last_character = '\0';
+        }
+        // printf("user_input=%s\n", user_input);
 
-        const char* const delimiter = " ";
-        char* token                 = NULL;
-        /* Get the first token */
-        token                       = strtok(user_input, delimiter);
+        char exit_command[5] = {}; // Buffer to store exit command
+        memcpy(exit_command, user_input, 4);
 
-        if (strcmp(token, "exit") == 0)
+        if (strcmp(exit_command, "exit") == 0)
         {
             should_run = false;
         }
@@ -104,19 +113,22 @@ int main(void)
             {
                 /* Child process */
 
-                void* const ptr             = link_shared_memory_for_communication(shared_memory_name);
+                void* const ptr           = link_shared_memory_for_communication(shared_memory_name);
 
-                char file_path[UINT8_MAX]   = "/bin/";
+                char file_path[UINT8_MAX] = "/bin/";
+                memcpy(user_input, ptr, MAX_USER_INPUT_LENGTH);
+
+                // printf("ptr=%s\n", (char*) ptr);
+                // printf("user_input=%s\n", (char*) user_input);
 
                 const char* const delimiter = " ";
                 /** Get the command name */
-                char* const command_name    = strtok(ptr, delimiter);
+                char* const command_name    = strtok(user_input, delimiter);
                 strcat(file_path, command_name);
 
-                /* Get the arguments */
+                /* Get the rest of arguments */
                 char* const arguments = strtok(NULL, "");
-
-                printf("arguments=%s\n", arguments);
+                // printf("arguments=%s\n", arguments);
 
                 if (arguments == NULL)
                 {
