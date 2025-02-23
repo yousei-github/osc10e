@@ -33,9 +33,15 @@
 
 /* Prototype */
 
+// Shared memory interface (Shared memory controller)
 void* create_shared_memory_for_communication(const char* shared_memory_name);
 void* link_shared_memory_for_communication(const char* shared_memory_name);
 void unlink_shared_memory(const char* shared_memory_name);
+
+// Argument processing interface (execvp factory)
+uint32_t count_number_of_arguments(const char* arguments);
+char** create_input_parameter_list(char* const command_name, char* const arguments);
+void free_input_parameter_list(void* address);
 
 /* Variable */
 
@@ -119,7 +125,7 @@ int main(void)
                 memcpy(user_input, ptr, MAX_USER_INPUT_LENGTH);
 
                 // printf("ptr=%s\n", (char*) ptr);
-                // printf("user_input=%s\n", (char*) user_input);
+                printf("user_input=%s\n", (char*) user_input);
 
                 const char* const delimiter = " ";
                 /** Get the command name */
@@ -128,7 +134,8 @@ int main(void)
 
                 /* Get the rest of arguments */
                 char* const arguments = strtok(NULL, "");
-                // printf("arguments=%s\n", arguments);
+                printf("arguments=%s\n", arguments);
+                printf("user_input=%s\n", user_input);
 
                 if (arguments == NULL)
                 {
@@ -136,7 +143,8 @@ int main(void)
                 }
                 else
                 {
-                    execlp(file_path, command_name, arguments, NULL);
+                    char** const input_parameter_list = create_input_parameter_list(command_name, arguments);
+                    execvp(file_path, input_parameter_list);
                 }
             }
             else
@@ -151,6 +159,8 @@ int main(void)
         }
     }
 
+    free(user_input);
+
     return EXIT_SUCCESS;
 }
 
@@ -158,8 +168,8 @@ int main(void)
  * @brief
  * Create a shared memory that can be written and read
  * 
- * @param[in] shared_memory_name The name of shared memory
- * @return The pointer of created shared memory. Return NULL if it failed
+ * @param[in] shared_memory_name Name of shared memory
+ * @return Pointer of created shared memory. Return NULL if it failed
  */
 void* create_shared_memory_for_communication(const char* shared_memory_name)
 {
@@ -186,8 +196,8 @@ void* create_shared_memory_for_communication(const char* shared_memory_name)
  * @brief
  * Link a created shared memory that can be written and read
  * 
- * @param[in] shared_memory_name The name of shared memory
- * @return The pointer of linked shared memory. Return NULL if it failed
+ * @param[in] shared_memory_name Name of shared memory
+ * @return Pointer of linked shared memory. Return NULL if it failed
  */
 void* link_shared_memory_for_communication(const char* shared_memory_name)
 {
@@ -212,7 +222,7 @@ void* link_shared_memory_for_communication(const char* shared_memory_name)
  * @brief
  * Unlink a shared memory
  * 
- * @param[in] shared_memory_name The name of shared memory
+ * @param[in] shared_memory_name Name of shared memory
  */
 void unlink_shared_memory(const char* shared_memory_name)
 {
@@ -220,4 +230,85 @@ void unlink_shared_memory(const char* shared_memory_name)
     {
         printf("Error removing %s\n", shared_memory_name);
     }
+}
+
+/**
+ * @brief Count the number of arguments
+ * 
+ * @param[in] arguments Arguments array
+ * @return Number of arguments
+ */
+uint32_t count_number_of_arguments(const char* arguments)
+{
+    uint32_t number_of_arguments    = 0;
+    const uint32_t arguments_length = strlen(arguments) + 1; // Byte
+    char* const arguments_copy      = (char*) malloc(arguments_length);
+    if (arguments_copy == NULL)
+    {
+        printf("%s: Memory Allocation Error.", __func__);
+        abort();
+    }
+
+    memcpy(arguments_copy, arguments, arguments_length);
+
+    const char* const delimiter = " ";
+    char* token                 = strtok(arguments_copy, delimiter);
+    while (token != NULL)
+    {
+        // printf("token=%s\n", token);
+        number_of_arguments++;
+        token = strtok(NULL, delimiter);
+    }
+
+    free(arguments_copy);
+
+    return number_of_arguments;
+}
+
+/**
+ * @brief Create the input parameter list for execvp()
+ * 
+ * @param[in] command_name Name of command to execute
+ * @param[in] arguments    Arguments array for command_name
+ * @return Pointer of input parameter list
+ */
+char** create_input_parameter_list(char* const command_name, char* const arguments)
+{
+    uint32_t number_of_arguments    = count_number_of_arguments(arguments);
+
+    // Prepare input parameters for execvp()
+    const uint8_t char_pointer_size = sizeof(char*);
+    number_of_arguments += 2; // First parameter stores command name and last parameter stores NULL
+    char** const input_parameter_list = (char**) malloc(number_of_arguments * char_pointer_size);
+    if (input_parameter_list == NULL)
+    {
+        printf("%s: Memory Allocation Error.", __func__);
+        abort();
+    }
+
+    // Save first parameter
+    input_parameter_list[0]     = command_name;
+
+    const char* const delimiter = " ";
+    char* token                 = strtok(arguments, delimiter);
+    input_parameter_list[1]     = token;
+
+    for (uint32_t index = 2; index < number_of_arguments - 1; index++)
+    {
+        // Save arguments
+        char* token                 = strtok(NULL, delimiter);
+        input_parameter_list[index] = token;
+        // printf("input_parameter_list[%d]=%s\n", index, input_parameter_list[index]);
+    }
+    input_parameter_list[number_of_arguments - 1] = NULL;
+
+    return input_parameter_list;
+}
+
+/**
+ * @brief Free the input parameter list created by create_input_parameter_list()
+ */
+void free_input_parameter_list(void* address)
+{
+    free(address);
 }
