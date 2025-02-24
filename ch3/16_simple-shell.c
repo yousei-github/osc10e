@@ -15,6 +15,7 @@
 
 /* Header */
 
+#include <assert.h>
 #include <fcntl.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -39,6 +40,7 @@ void* link_shared_memory_for_communication(const char* shared_memory_name);
 void unlink_shared_memory(const char* shared_memory_name);
 
 // Argument processing interface (execvp factory)
+char* create_file_path(char* const destination, char* const command_name);
 uint32_t count_number_of_arguments(const char* arguments);
 char** create_input_parameter_list(char* const command_name, char* const arguments);
 void free_input_parameter_list(void* address);
@@ -82,16 +84,16 @@ int main(void)
         }
 
         char* const last_character = &(user_input[strlen(user_input) - 1]);
+        // Replace last character with null character
         if (*last_character == '\n')
         {
             *last_character = '\0';
         }
         // printf("user_input=%s\n", user_input);
 
-        char exit_command[5] = {}; // Buffer to store exit command
-        memcpy(exit_command, user_input, 4);
+        const char exit_command[] = "exit"; // Exit command
 
-        if (strcmp(exit_command, "exit") == 0)
+        if (strncmp(user_input, exit_command, strlen(exit_command)) == 0)
         {
             should_run = false;
         }
@@ -107,7 +109,7 @@ int main(void)
             memcpy(ptr, user_input, MAX_USER_INPUT_LENGTH);
 
             /* Fork a child process */
-            const pid_t pid = fork();
+            pid_t pid = fork();
 
             if (pid < 0)
             {
@@ -119,40 +121,53 @@ int main(void)
             {
                 /* Child process */
 
-                void* const ptr           = link_shared_memory_for_communication(shared_memory_name);
+                void* const ptr = link_shared_memory_for_communication(shared_memory_name);
 
-                char file_path[UINT8_MAX] = "/bin/";
                 memcpy(user_input, ptr, MAX_USER_INPUT_LENGTH);
-
-                // printf("ptr=%s\n", (char*) ptr);
-                printf("user_input=%s\n", (char*) user_input);
+                // printf("ptr=%s, user_input=%s\n", (char*) ptr, (char*) user_input);
 
                 const char* const delimiter = " ";
                 /** Get the command name */
                 char* const command_name    = strtok(user_input, delimiter);
-                strcat(file_path, command_name);
+
+                char file_path[UINT8_MAX]   = {};
+                create_file_path(file_path, command_name);
 
                 /* Get the rest of arguments */
                 char* const arguments = strtok(NULL, "");
-                printf("arguments=%s\n", arguments);
-                printf("user_input=%s\n", user_input);
+                // printf("arguments=%s, user_input=%s\n", arguments, user_input);
 
+                int execution_result  = EXIT_SUCCESS;
                 if (arguments == NULL)
                 {
-                    execlp(file_path, command_name, NULL);
+                    execution_result = execlp(file_path, command_name, NULL);
                 }
                 else
                 {
                     char** const input_parameter_list = create_input_parameter_list(command_name, arguments);
-                    execvp(file_path, input_parameter_list);
+                    execution_result                  = execvp(file_path, input_parameter_list);
+                }
+
+                if (execution_result != EXIT_SUCCESS)
+                {
+                    /* Error occurred */
+                    fprintf(stderr, "Execution Failed: file_path=%s, arguments=%s\n", file_path, arguments);
+                    return EXIT_FAILURE;
                 }
             }
             else
             {
                 /* Parent process */
+                const pid_t child_pid = pid;
 
-                /* Parent will wait for the child to complete */
-                wait(NULL);
+                /* Parent will wait for a child to complete */
+                int child_status      = EXIT_SUCCESS;
+                pid                   = wait(&child_status);
+
+                if (pid == child_pid)
+                {
+                    // printf("Child complete: status=%d\n", child_status);
+                }
 
                 unlink_shared_memory(shared_memory_name);
             }
@@ -164,6 +179,8 @@ int main(void)
     return EXIT_SUCCESS;
 }
 
+/** Shared memory controller */
+
 /**
  * @brief
  * Create a shared memory that can be written and read
@@ -173,6 +190,8 @@ int main(void)
  */
 void* create_shared_memory_for_communication(const char* shared_memory_name)
 {
+    assert(shared_memory_name != NULL);
+
     const int shm_fd = shm_open(shared_memory_name, O_CREAT | O_RDWR, 0660);
     if (shm_fd == -1)
     {
@@ -201,6 +220,8 @@ void* create_shared_memory_for_communication(const char* shared_memory_name)
  */
 void* link_shared_memory_for_communication(const char* shared_memory_name)
 {
+    assert(shared_memory_name != NULL);
+
     const int shm_fd = shm_open(shared_memory_name, O_RDONLY, 0440);
     if (shm_fd == -1)
     {
@@ -219,17 +240,53 @@ void* link_shared_memory_for_communication(const char* shared_memory_name)
 }
 
 /**
- * @brief
- * Unlink a shared memory
+ * @brief Unlink a shared memory
  * 
  * @param[in] shared_memory_name Name of shared memory
  */
 void unlink_shared_memory(const char* shared_memory_name)
 {
+    assert(shared_memory_name != NULL);
+
     if (shm_unlink(shared_memory_name) == -1)
     {
         printf("Error removing %s\n", shared_memory_name);
     }
+}
+
+/** Execvp factory */
+
+/**
+ * @brief Create the file path for execlp(), execvp()
+ * 
+ * @param[in] destination  String to store file path
+ * @param[in] command_name Command Name
+ * 
+ * @return File path
+ */
+char* create_file_path(char* const destination, char* const command_name)
+{
+    assert((destination != NULL) && (command_name != NULL));
+
+    const char path_separator = '/';
+
+    // Does the command name has absolute path (/) or relative path (./) or just itself?
+    if (command_name[0] == path_separator)
+    {
+        // For absolute path, nothing to do here
+    }
+    else if (strncmp(command_name, "./", 2) == 0)
+    {
+        // For relative path, nothing to do here
+    }
+    else
+    {
+        // For command name itself, load the default executable file directory
+        strcpy(destination, "/bin/");
+    }
+    strcat(destination, command_name);
+
+    return destination;
 }
 
 /**
@@ -240,6 +297,8 @@ void unlink_shared_memory(const char* shared_memory_name)
  */
 uint32_t count_number_of_arguments(const char* arguments)
 {
+    assert(arguments != NULL);
+
     uint32_t number_of_arguments    = 0;
     const uint32_t arguments_length = strlen(arguments) + 1; // Byte
     char* const arguments_copy      = (char*) malloc(arguments_length);
@@ -274,6 +333,8 @@ uint32_t count_number_of_arguments(const char* arguments)
  */
 char** create_input_parameter_list(char* const command_name, char* const arguments)
 {
+    assert((command_name != NULL) && (arguments != NULL));
+
     uint32_t number_of_arguments    = count_number_of_arguments(arguments);
 
     // Prepare input parameters for execvp()
@@ -310,5 +371,7 @@ char** create_input_parameter_list(char* const command_name, char* const argumen
  */
 void free_input_parameter_list(void* address)
 {
+    assert(address != NULL);
+
     free(address);
 }
