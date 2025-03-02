@@ -106,7 +106,7 @@ int main(void)
         read(fd[Read_End], read_msg, BUFFER_SIZE);
         printf("Child reads: %s\n", read_msg);
 
-        /** Close the write end of the pipe */
+        /** Close the read end of the pipe */
         close(fd[Read_End]);
     }
     else

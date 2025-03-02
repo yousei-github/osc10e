@@ -1,11 +1,13 @@
 /**
  * @file
- * simple-shell.c
+ * shell.c
  * 
  * @details
- * Simple shell interface program.
- * It demonstrates the basic operations of a command-line shell:
- * - Execute a program with argument(s)
+ * Shell interface program.
+ * It demonstrates the general operations of a command-line shell:
+ * - Execute a program with argument(s);
+ * - Allow the child process to run in the background, or concurrently by adding an ampersand (&) at the end of the command;
+ * - Provide a history feature to allow a user to execute the most recent command by entering !!; (@todo)
  *
  * Operating System Concepts - Tenth Edition
  * Copyright John Wiley & Sons - 2018
@@ -18,13 +20,11 @@
 /* Header */
 
 #include <assert.h>
-#include <fcntl.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/mman.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -34,12 +34,14 @@
 
 /* Type */
 
-/* Prototype */
+typedef enum
+{
+    Read_End  = 0,
+    Write_End = 1,
+    Pipe_Index_Max
+} Pipe_File_Descriptor_Index;
 
-// Shared memory interface (Shared memory controller)
-void* create_shared_memory_for_communication(const char* shared_memory_name);
-void* link_shared_memory_for_communication(const char* shared_memory_name);
-void unlink_shared_memory(const char* shared_memory_name);
+/* Prototype */
 
 // Argument processing interface (Execvp factory)
 char* create_file_path(char* const destination, char* const command_name);
@@ -48,8 +50,6 @@ char** create_input_parameter_list(char* const command_name, char* const argumen
 void free_input_parameter_list(void* address);
 
 /* Variable */
-
-const char* const shared_memory_name = "Shell Input";
 
 /* Function */
 
@@ -73,6 +73,7 @@ int main(void)
          * After reading user input, the steps are:
          * (1) Fork a child process
          * (2) The child process will invoke execvp()
+         * (3) If command included &, parent will not invoke wait()
          */
 
         // Reads a line from the specified stream
@@ -89,13 +90,28 @@ int main(void)
             continue;
         }
 
-        char* const last_character = &(user_input[last_character_index]);
+        char* last_character = &(user_input[last_character_index]);
         // Replace last character '\n' with null character
         if (*last_character == '\n')
         {
             *last_character = '\0';
         }
         // printf("user_input=%s\n", user_input);
+
+        /* Check if the last character is & */
+        last_character_index = strlen(user_input) - 1;
+        if (last_character_index == 0)
+        {
+            continue;
+        }
+
+        last_character               = &(user_input[last_character_index]);
+        bool should_run_concurrently = false;
+        if (*last_character == '&')
+        {
+            should_run_concurrently = true;
+            *last_character         = '\0';
+        }
 
         const char exit_command[] = "exit"; // Exit command
 
@@ -105,15 +121,13 @@ int main(void)
         }
         else
         {
-            /* Write the user input into the shared memory */
-            void* const ptr = create_shared_memory_for_communication(shared_memory_name);
-            if (ptr == NULL)
+            int fd[Pipe_Index_Max];
+            /* Create a pipe */
+            if (pipe(fd) == -1)
             {
-                printf("Create shared memory failed\n");
+                fprintf(stderr, "Pipe failed\n");
                 return EXIT_FAILURE;
             }
-
-            memcpy(ptr, user_input, MAX_USER_INPUT_LENGTH);
 
             /* Fork a child process */
             pid_t pid = fork();
@@ -128,10 +142,14 @@ int main(void)
             {
                 /* Child process */
 
-                void* const ptr = link_shared_memory_for_communication(shared_memory_name);
+                /** Close the unused end of the pipe */
+                close(fd[Write_End]);
 
-                memcpy(user_input, ptr, MAX_USER_INPUT_LENGTH);
-                // printf("ptr=%s, user_input=%s\n", (char*) ptr, (char*) user_input);
+                /** Read from the pipe */
+                read(fd[Read_End], user_input, MAX_USER_INPUT_LENGTH);
+
+                /** Close the read end of the pipe */
+                close(fd[Read_End]);
 
                 /* Parsing what the user has entered */
                 const char* const delimiter = " ";
@@ -166,18 +184,35 @@ int main(void)
             else
             {
                 /* Parent process */
+
+                /* Write the user input into the pipe */
+                /** Close the unused end of the pipe */
+                close(fd[Read_End]);
+
+                /** Write to the pipe */
+                write(fd[Write_End], user_input, strlen(user_input) + 1);
+
+                /** Close the write end of the pipe */
+                close(fd[Write_End]);
+
                 const pid_t child_pid = pid;
 
-                /* Parent will wait for a child to complete */
-                int child_status      = EXIT_SUCCESS;
-                pid                   = wait(&child_status);
-
-                if (pid == child_pid)
+                if (should_run_concurrently)
                 {
-                    // printf("Child complete: status=%d\n", child_status);
+                    /* code */
                 }
+                else
+                {
+                    /* Parent will wait for a child to complete */
+                    int child_status = EXIT_SUCCESS;
+                    pid              = wait(&child_status);
 
-                unlink_shared_memory(shared_memory_name);
+                    if (pid == child_pid)
+                    {
+                        // printf("Child complete: status=%d\n", child_status);
+                    }
+                }
+                // printf("(Parent) Finish parent\n");
             }
         }
     }
@@ -185,81 +220,6 @@ int main(void)
     free(user_input);
 
     return EXIT_SUCCESS;
-}
-
-/** Shared memory controller */
-
-/**
- * @brief
- * Create a shared memory that can be written and read
- * 
- * @param[in] shared_memory_name Name of shared memory
- * @return Pointer of created shared memory. Return NULL if it failed
- */
-void* create_shared_memory_for_communication(const char* shared_memory_name)
-{
-    assert(shared_memory_name != NULL);
-
-    const int shm_fd = shm_open(shared_memory_name, O_CREAT | O_RDWR, 0660);
-    if (shm_fd == -1)
-    {
-        printf("Open shared memory segment failed\n");
-        return NULL;
-    }
-
-    ftruncate(shm_fd, MAX_USER_INPUT_LENGTH);
-
-    void* const ptr = mmap(0, MAX_USER_INPUT_LENGTH, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
-    if (ptr == MAP_FAILED)
-    {
-        printf("Map failed\n");
-        return NULL;
-    }
-
-    return ptr;
-}
-
-/**
- * @brief
- * Link a created shared memory that can be written and read
- * 
- * @param[in] shared_memory_name Name of shared memory
- * @return Pointer of linked shared memory. Return NULL if it failed
- */
-void* link_shared_memory_for_communication(const char* shared_memory_name)
-{
-    assert(shared_memory_name != NULL);
-
-    const int shm_fd = shm_open(shared_memory_name, O_RDONLY, 0440);
-    if (shm_fd == -1)
-    {
-        printf("Open shared memory failed\n");
-        return NULL;
-    }
-
-    void* const ptr = mmap(0, MAX_USER_INPUT_LENGTH, PROT_READ, MAP_SHARED, shm_fd, 0);
-    if (ptr == MAP_FAILED)
-    {
-        printf("Map failed\n");
-        return NULL;
-    }
-
-    return ptr;
-}
-
-/**
- * @brief Unlink a shared memory
- * 
- * @param[in] shared_memory_name Name of shared memory
- */
-void unlink_shared_memory(const char* shared_memory_name)
-{
-    assert(shared_memory_name != NULL);
-
-    if (shm_unlink(shared_memory_name) == -1)
-    {
-        printf("Error removing %s\n", shared_memory_name);
-    }
 }
 
 /** Execvp factory */

@@ -15,7 +15,10 @@
         "errno.h": "c",
         "types.h": "c",
         "stdio.h": "c",
-        "random": "c"
+        "random": "c",
+        "string.h": "c",
+        "stdlib.h": "c",
+        "fcntl.h": "c"
     },
     "editor.tabSize": 4,
     "editor.indentSize": "tabSize",
